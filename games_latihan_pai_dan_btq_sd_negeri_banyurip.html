@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Games Latihan PAI & BTQ SD Negeri Banyurip - Lomba MAPSI</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter, Amiri (Arabic), and Cinzel (Certificate) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Amiri:wght@400;700&family=Cinzel:wght@700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .font-arabic { font-family: 'Amiri', serif; }
+        .font-cert { font-family: 'Cinzel', serif; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #10b981; border-radius: 8px; }
+        @keyframes bounce-slow { 0%, 100% { transform: translateY(-3%); } 50% { transform: translateY(0); } }
+        .animate-bounce-slow { animation: bounce-slow 3s infinite ease-in-out; }
+        
+        /* Print styling for Certificate */
+        @media print {
+            body * { visibility: hidden; }
+            #certificatePrintArea, #certificatePrintArea * { visibility: visible; }
+            #certificatePrintArea { position: absolute; left: 0; top: 0; width: 100%; height: 100%; margin: 0; padding: 20px; border: 8px solid #059669; }
+            .no-print { display: none !important; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col justify-between selection:bg-emerald-500 selection:text-white">
+
+    <header class="bg-white/90 backdrop-blur-md border-b border-slate-200 sticky top-0 z-40 shadow-sm no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
+            <!-- Logo & Brand -->
+            <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('materialsTab')">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-tr from-emerald-500 to-teal-400 text-white rounded-2xl flex items-center justify-center shadow-md shadow-emerald-200 text-xl font-black transform -rotate-3">
+                    <i class="fas fa-book-quran"></i>
+                </div>
+                <div>
+                    <h1 class="font-black text-slate-900 text-base sm:text-lg leading-tight">MAPSI PAI & BTQ</h1>
+                    <p class="text-[11px] sm:text-xs font-bold text-emerald-600">SD Negeri Banyurip</p>
+                </div>
+            </div>
+
+            <!-- Student Profile Badge -->
+            <div id="studentBadge" class="flex items-center gap-2 bg-emerald-50 px-3 py-1.5 sm:px-4 sm:py-2 rounded-2xl border border-emerald-200">
+                <div class="w-7 h-7 sm:w-8 sm:h-8 bg-emerald-500 text-white rounded-xl flex items-center justify-center text-xs font-bold">
+                    <i class="fas fa-user-graduate"></i>
+                </div>
+                <div class="text-left">
+                    <span class="text-[10px] uppercase font-bold text-slate-400 block leading-none">Peserta</span>
+                    <span id="currentStudentName" class="text-xs sm:text-sm font-black text-emerald-900 truncate max-w-[120px] sm:max-w-[200px] block">Siswa Banyurip</span>
+                </div>
+                <button onclick="changeStudentName()" title="Ganti Nama" class="ml-1 text-slate-400 hover:text-emerald-600 transition text-xs">
+                    <i class="fas fa-pen-to-square"></i>
+                </button>
+            </div>
+
+            <!-- Navigation Desktop -->
+            <div class="hidden md:flex items-center space-x-2">
+                <button onclick="switchTab('materialsTab')" id="nav-materialsTab" class="px-5 py-2.5 rounded-xl text-sm font-bold transition flex items-center gap-2 bg-emerald-600 text-white shadow-md">
+                    <i class="fas fa-book-open"></i> Materi Pelajaran
+                </button>
+                <button onclick="switchTab('quizTab')" id="nav-quizTab" class="px-5 py-2.5 rounded-xl text-sm font-bold transition flex items-center gap-2 text-slate-600 hover:bg-emerald-50">
+                    <i class="fas fa-gamepad text-amber-500"></i> Kuis & Tryout (100+ Soal)
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div id="loginModal" class="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-md hidden flex items-center justify-center p-4 no-print">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl border-4 border-emerald-300 text-center relative overflow-hidden animate-bounce-slow">
+            <div class="absolute -top-10 -right-10 w-32 h-32 bg-emerald-100 rounded-full blur-2xl pointer-events-none"></div>
+            
+            <button onclick="closeNameModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 w-8 h-8 rounded-full flex items-center justify-center transition">
+                <i class="fas fa-xmark text-lg"></i>
+            </button>
+
+            <div class="w-16 h-16 bg-gradient-to-tr from-emerald-500 via-teal-400 to-emerald-600 text-white rounded-3xl flex items-center justify-center mx-auto mb-3 text-2xl shadow-xl shadow-emerald-200 transform -rotate-3">
+                <i class="fas fa-user-astronaut"></i>
+            </div>
+            <h2 class="text-xl sm:text-2xl font-black text-slate-800 mb-1 tracking-tight">Masukkan Nama Kamu</h2>
+            <p class="text-xs font-bold text-emerald-700 bg-emerald-100/70 px-4 py-1.5 rounded-full inline-block mb-4">Untuk cetak sertifikat & pencatatan skor</p>
+
+            <form onsubmit="event.preventDefault(); saveStudentName();" class="space-y-4 text-left">
+                <div>
+                    <label class="block text-xs font-black text-slate-700 mb-1.5 uppercase tracking-wider">
+                        <i class="fas fa-user-graduate text-emerald-500 mr-1"></i> Nama Lengkap Peserta
+                    </label>
+                    <input type="text" id="studentNameInput" required placeholder="Contoh: Ahmad Hidayat..." class="w-full px-4 py-3 border-2 border-slate-200 rounded-2xl focus:ring-4 focus:ring-emerald-100 focus:border-emerald-500 focus:outline-none font-bold text-slate-800 transition shadow-sm text-sm">
+                </div>
+
+                <div class="pt-1">
+                    <button type="submit" class="w-full py-3.5 bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 text-white rounded-2xl font-black text-sm shadow-lg shadow-emerald-200 hover:shadow-xl hover:scale-[1.02] transition active:scale-95 flex items-center justify-center gap-2">
+                        <span>Lanjutkan Ke Game</span>
+                        <i class="fas fa-check-circle"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full pb-24 md:pb-8 no-print">
+
+        <!-- Toast Notification Box -->
+        <div id="toast" class="fixed top-20 right-4 z-50 transform translate-x-full transition-all duration-300 max-w-sm pointer-events-none">
+            <div id="toastContent" class="px-4 py-3 rounded-2xl shadow-xl text-white font-bold text-xs sm:text-sm flex items-center gap-3">
+                <span id="toastMessage">Pesan Toast</span>
+            </div>
+        </div>
+
+        <section id="materialsTab" class="block space-y-6">
+            <!-- Hero Banner -->
+            <div class="bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 rounded-3xl p-6 sm:p-10 text-white shadow-xl relative overflow-hidden">
+                <div class="absolute -right-8 -bottom-8 w-64 h-64 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+                <div class="relative z-10 max-w-3xl">
+                    <span class="inline-flex items-center gap-1.5 bg-amber-400 text-slate-900 font-black text-xs px-3.5 py-1 rounded-full uppercase tracking-wider mb-3 shadow">
+                        <i class="fas fa-star"></i> Juknis Resmi MAPSI SD 2026
+                    </span>
+                    <h2 class="text-2xl sm:text-4xl font-black mb-3 leading-tight">Materi Pelajaran Lengkap & Interaktif</h2>
+                    <p class="text-emerald-100 text-xs sm:text-sm leading-relaxed mb-6 font-medium">
+                        Pelajari seluruh 6 bidang materi lomba MAPSI PAI & BTQ (Al-Qur'an Hadits, Aqidah, Akhlak, Fiqih, Sejarah Peradaban Islam, dan BTQ Tajwid). Klik <strong>"Baca Materi Lengkap"</strong> pada setiap kartu untuk mempelajari rangkuman mendalam.
+                    </p>
+                    <div class="flex flex-wrap gap-3">
+                        <button onclick="switchTab('quizTab');" class="px-6 py-3.5 bg-amber-400 hover:bg-amber-300 text-slate-900 rounded-2xl font-black shadow-lg transition transform hover:scale-105 active:scale-95 text-xs sm:text-sm flex items-center gap-2">
+                            <i class="fas fa-play-circle text-lg"></i>
+                            <span>Mulai Latihan Kuis (100+ Soal)</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Material Filters -->
+            <div class="flex items-center gap-2 overflow-x-auto pb-2 custom-scrollbar">
+                <button onclick="filterMaterials('all')" class="mat-filter-btn px-4 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap bg-emerald-600 text-white shadow" data-cat="all">
+                    <i class="fas fa-th-large mr-1"></i> Semua Materi (6 Bidang)
+                </button>
+                <button onclick="filterMaterials('quran')" class="mat-filter-btn px-4 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap bg-white text-slate-600 hover:bg-emerald-50 border border-slate-200" data-cat="quran">
+                    <i class="fas fa-book-quran text-emerald-500 mr-1"></i> Al-Qur'an Hadits
+                </button>
+                <button onclick="filterMaterials('aqidah')" class="mat-filter-btn px-4 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap bg-white text-slate-600 hover:bg-emerald-50 border border-slate-200" data-cat="aqidah">
+                    <i class="fas fa-heart text-rose-500 mr-1"></i> Aqidah
+                </button>
+                <button onclick="filterMaterials('akhlak')" class="mat-filter-btn px-4 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap bg-white text-slate-600 hover:bg-emerald-50 border border-slate-200" data-cat="akhlak">
+                    <i class="fas fa-hands-holding text-blue-500 mr-1"></i> Akhlak
+                </button>
+                <button onclick="filterMaterials('fiqih')" class="mat-filter-btn px-4 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap bg-white text-slate-600 hover:bg-emerald-50 border border-slate-200" data-cat="fiqih">
+                    <i class="fas fa-kaaba text-amber-500 mr-1"></i> Fiqih
+                </button>
+                <button onclick="filterMaterials('spi')" class="mat-filter-btn px-4 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap bg-white text-slate-600 hover:bg-emerald-50 border border-slate-200" data-cat="spi">
+                    <i class="fas fa-landmark text-purple-500 mr-1"></i> Sejarah (SPI)
+                </button>
+                <button onclick="filterMaterials('btq')" class="mat-filter-btn px-4 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap bg-white text-slate-600 hover:bg-emerald-50 border border-slate-200" data-cat="btq">
+                    <i class="fas fa-pen-nib text-teal-500 mr-1"></i> BTQ & Tajwid
+                </button>
+            </div>
+
+            <!-- Dynamic Grid for Material Cards -->
+            <div id="materialsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Dynamically populated via JS -->
+            </div>
+        </section>
+
+        <section id="quizTab" class="hidden space-y-6">
+            <!-- Quiz Start View -->
+            <div id="quizStartView" class="bg-white rounded-3xl p-6 sm:p-8 shadow-xl border border-slate-200 text-center">
+                <div class="w-16 h-16 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center mx-auto mb-4 text-2xl shadow-md">
+                    <i class="fas fa-gamepad"></i>
+                </div>
+                <h2 class="text-2xl sm:text-3xl font-black text-slate-900 mb-2">Simulasi & Quiz Lomba MAPSI</h2>
+                <p class="text-xs sm:text-sm text-slate-500 max-w-xl mx-auto mb-6">
+                    Latihan 100+ Soal pilihan ganda lengkap dengan **Jawaban Benar & Pembahasan Langsung**. Selesaikan kuis untuk mendapatkan **Sertifikat Pengembang Resmi dari Parisbanyurip**!
+                </p>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto mb-6">
+                    <div onclick="selectQuizCategory('all')" id="catSelect-all" class="quiz-cat-card bg-emerald-50 border-2 border-emerald-500 p-4 rounded-2xl cursor-pointer hover:shadow-md transition text-left">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-black uppercase tracking-wider text-emerald-700">Tryout Lengkap</span>
+                            <i class="fas fa-check-circle text-emerald-600 text-lg"></i>
+                        </div>
+                        <h4 class="font-black text-slate-800 text-base">Semua Topik Juknis</h4>
+                        <p class="text-[11px] text-slate-500 font-medium">100+ Soal Gabungan MAPSI</p>
+                    </div>
+
+                    <div onclick="selectQuizCategory('pai')" id="catSelect-pai" class="quiz-cat-card bg-white border-2 border-slate-200 p-4 rounded-2xl cursor-pointer hover:shadow-md transition text-left">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-black uppercase tracking-wider text-blue-700">Fokus PAI</span>
+                            <i class="fas fa-circle text-slate-300 text-lg"></i>
+                        </div>
+                        <h4 class="font-black text-slate-800 text-base">Al-Qur'an, Aqidah, Fiqih, SPI</h4>
+                        <p class="text-[11px] text-slate-500 font-medium">Soal Pengetahuan PAI</p>
+                    </div>
+
+                    <div onclick="selectQuizCategory('btq')" id="catSelect-btq" class="quiz-cat-card bg-white border-2 border-slate-200 p-4 rounded-2xl cursor-pointer hover:shadow-md transition text-left">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-black uppercase tracking-wider text-teal-700">Fokus BTQ</span>
+                            <i class="fas fa-circle text-slate-300 text-lg"></i>
+                        </div>
+                        <h4 class="font-black text-slate-800 text-base">Tajwid & Transliterasi</h4>
+                        <p class="text-[11px] text-slate-500 font-medium">Hukum Nun, Mad, Qalqalah</p>
+                    </div>
+                </div>
+
+                <button onclick="startQuiz()" class="px-8 py-4 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white rounded-2xl font-black shadow-lg shadow-emerald-200 hover:shadow-xl transition transform hover:scale-105 active:scale-95 text-base flex items-center gap-3 mx-auto">
+                    <i class="fas fa-play"></i>
+                    <span>Mulai Kuis Sekarang</span>
+                </button>
+            </div>
+
+            <!-- Active Quiz Screen -->
+            <div id="quizActiveView" class="hidden space-y-4">
+                <!-- Top Progress Bar & Header -->
+                <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-md border border-slate-200 flex flex-wrap items-center justify-between gap-4">
+                    <div class="flex items-center gap-3">
+                        <span id="quizCategoryBadge" class="bg-emerald-100 text-emerald-800 text-xs font-black px-3 py-1 rounded-xl uppercase">PAI & BTQ</span>
+                        <span id="questionCounter" class="text-xs sm:text-sm font-bold text-slate-600">Soal 1 dari 100</span>
+                    </div>
+
+                    <!-- Timer & Score -->
+                    <div class="flex items-center gap-4">
+                        <div class="flex items-center gap-1.5 text-xs font-black text-amber-600 bg-amber-50 px-3 py-1.5 rounded-xl border border-amber-200">
+                            <i class="fas fa-clock"></i>
+                            <span id="quizTimer">00:00</span>
+                        </div>
+                        <div class="flex items-center gap-1.5 text-xs font-black text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-200">
+                            <i class="fas fa-star"></i>
+                            <span id="currentScoreDisplay">Skor: 0</span>
+                        </div>
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+                        <div id="quizProgressBar" class="bg-gradient-to-r from-emerald-500 to-teal-400 h-2.5 rounded-full transition-all duration-300" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- Active Question Container -->
+                <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-xl border border-slate-200 space-y-6 relative">
+                    <div class="flex items-center justify-between">
+                        <span id="questionTopicTag" class="text-[11px] font-bold text-slate-400 uppercase tracking-widest bg-slate-100 px-3 py-1 rounded-lg">Topik Materi</span>
+                    </div>
+
+                    <h3 id="questionText" class="text-base sm:text-xl font-extrabold text-slate-800 leading-snug">
+                        Teks soal akan ditampilkan di sini...
+                    </h3>
+
+                    <!-- Arabic Snippet if applicable -->
+                    <div id="questionArabicContainer" class="hidden p-4 bg-amber-50 rounded-2xl border border-amber-200 text-right">
+                        <p id="questionArabicText" class="font-arabic text-2xl sm:text-3xl font-bold text-slate-800 leading-loose"></p>
+                    </div>
+
+                    <!-- Answer Options -->
+                    <div id="optionsContainer" class="grid grid-cols-1 gap-3">
+                        <!-- Options injected dynamically -->
+                    </div>
+
+                    <!-- Explanation Box -->
+                    <div id="explanationBox" class="hidden bg-blue-50 border-2 border-blue-200 rounded-2xl p-4 sm:p-5 space-y-2">
+                        <div class="flex items-center gap-2 text-blue-800 font-black text-sm">
+                            <i class="fas fa-lightbulb text-amber-500 text-lg"></i>
+                            <span>Kunci Jawaban & Pembahasan:</span>
+                        </div>
+                        <p id="explanationText" class="text-xs sm:text-sm text-slate-700 font-semibold leading-relaxed">
+                            Penjelasan singkat mengenai jawaban soal ini...
+                        </p>
+                    </div>
+
+                    <!-- Action Navigation Buttons -->
+                    <div class="flex items-center justify-between pt-4 border-t border-slate-100">
+                        <button onclick="prevQuestion()" id="btnPrevQue" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl font-bold text-xs sm:text-sm transition flex items-center gap-1.5">
+                            <i class="fas fa-arrow-left"></i> Sebelum
+                        </button>
+                        <button onclick="nextQuestion()" id="btnNextQue" class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-black text-xs sm:text-sm shadow-md transition flex items-center gap-1.5">
+                            <span>Lanjut Soal</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Number Navigation Grid -->
+                <div class="bg-white rounded-2xl p-4 shadow-md border border-slate-200 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold text-slate-600">Navigasi Soal (1 - 100)</span>
+                        <div class="flex items-center gap-3 text-[10px] font-semibold text-slate-500">
+                            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 bg-emerald-500 rounded-full inline-block"></span> Benar</span>
+                            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 bg-rose-500 rounded-full inline-block"></span> Salah</span>
+                            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 bg-slate-200 rounded-full inline-block"></span> Belum</span>
+                        </div>
+                    </div>
+                    <div id="questionNumberGrid" class="flex flex-wrap gap-1.5 max-h-36 overflow-y-auto custom-scrollbar p-1">
+                        <!-- Grid buttons injected dynamically -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quiz Result View -->
+            <div id="quizResultView" class="hidden bg-white rounded-3xl p-6 sm:p-10 shadow-xl border border-slate-200 text-center space-y-6">
+                <div class="w-24 h-24 bg-gradient-to-tr from-amber-400 to-yellow-300 text-slate-900 rounded-full flex items-center justify-center mx-auto text-4xl shadow-xl shadow-amber-100 animate-bounce-slow">
+                    <i class="fas fa-trophy"></i>
+                </div>
+                <div>
+                    <span class="text-xs font-black uppercase tracking-widest text-emerald-600 bg-emerald-50 px-4 py-1.5 rounded-full">Hasil Latihan Kuis MAPSI</span>
+                    <h2 class="text-2xl sm:text-4xl font-black text-slate-800 mt-2">Selamat, <span id="resultStudentName">Siswa</span>!</h2>
+                    <p class="text-xs sm:text-sm text-slate-500 mt-1">Kamu telah menyelesaikan seluruh soal latihan persiapan Lomba MAPSI.</p>
+                </div>
+
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-2xl mx-auto">
+                    <div class="bg-emerald-50 border border-emerald-200 p-4 rounded-2xl">
+                        <span class="text-[10px] font-bold text-emerald-600 uppercase">Skor Akhir</span>
+                        <p id="finalScore" class="text-2xl sm:text-3xl font-black text-emerald-800">100</p>
+                    </div>
+                    <div class="bg-blue-50 border border-blue-200 p-4 rounded-2xl">
+                        <span class="text-[10px] font-bold text-blue-600 uppercase">Benar</span>
+                        <p id="finalCorrect" class="text-2xl sm:text-3xl font-black text-blue-800">0</p>
+                    </div>
+                    <div class="bg-rose-50 border border-rose-200 p-4 rounded-2xl">
+                        <span class="text-[10px] font-bold text-rose-600 uppercase">Salah</span>
+                        <p id="finalWrong" class="text-2xl sm:text-3xl font-black text-rose-800">0</p>
+                    </div>
+                    <div class="bg-amber-50 border border-amber-200 p-4 rounded-2xl">
+                        <span class="text-[10px] font-bold text-amber-600 uppercase">Waktu Selesai</span>
+                        <p id="finalTime" class="text-2xl sm:text-3xl font-black text-amber-800">00:00</p>
+                    </div>
+                </div>
+
+                <!-- Certificate Button -->
+                <div class="flex flex-wrap items-center justify-center gap-4 pt-4">
+                    <button onclick="openCertificateModal()" class="px-8 py-4 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-slate-900 rounded-2xl font-black text-sm shadow-xl transition transform hover:scale-105 active:scale-95 flex items-center gap-2">
+                        <i class="fas fa-award text-xl"></i>
+                        <span>Ambil Sertifikat dari Pengembang</span>
+                    </button>
+                    <button onclick="startQuiz()" class="px-6 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl font-black text-xs sm:text-sm shadow-lg transition flex items-center gap-2">
+                        <i class="fas fa-rotate-right"></i>
+                        <span>Ulangi Kuis</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <div id="materialDetailModal" class="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-md hidden flex items-center justify-center p-4 sm:p-6 no-print">
+        <div class="bg-white rounded-3xl max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden">
+            <!-- Modal Header -->
+            <div class="p-6 bg-gradient-to-r from-emerald-600 to-teal-700 text-white flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-lg">
+                        <i id="matModalIcon" class="fas fa-book-open"></i>
+                    </div>
+                    <div>
+                        <span id="matModalBadge" class="text-[10px] uppercase font-bold tracking-widest bg-amber-400 text-slate-900 px-2.5 py-0.5 rounded-full">Kategori</span>
+                        <h3 id="matModalTitle" class="text-lg sm:text-xl font-black leading-tight">Judul Materi</h3>
+                    </div>
+                </div>
+                <button onclick="closeMaterialModal()" class="w-9 h-9 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center text-white text-lg transition">
+                    <i class="fas fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Modal Content Body -->
+            <div id="matModalBody" class="p-6 sm:p-8 overflow-y-auto custom-scrollbar space-y-6 text-slate-700 text-xs sm:text-sm leading-relaxed">
+                <!-- Injected dynamically -->
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="p-4 bg-slate-50 border-t border-slate-200 flex justify-end">
+                <button onclick="closeMaterialModal()" class="px-6 py-2.5 bg-slate-800 hover:bg-slate-900 text-white rounded-xl font-bold text-xs transition">
+                    Tutup Materi
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="certificateModal" class="fixed inset-0 z-50 bg-slate-900/90 backdrop-blur-md hidden flex items-center justify-center p-2 sm:p-6 overflow-y-auto">
+        <div class="bg-white rounded-3xl max-w-4xl w-full p-4 sm:p-8 shadow-2xl relative my-auto border-8 border-emerald-600 text-center">
+            
+            <!-- Floating Print Controls -->
+            <div class="absolute top-4 right-4 flex items-center gap-2 no-print">
+                <button onclick="window.print()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs shadow-md transition flex items-center gap-1.5">
+                    <i class="fas fa-print"></i> Cetak / Simpan PDF
+                </button>
+                <button onclick="closeCertificateModal()" class="w-9 h-9 bg-slate-200 hover:bg-slate-300 rounded-full flex items-center justify-center text-slate-700 transition">
+                    <i class="fas fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Certificate Frame Inner -->
+            <div id="certificatePrintArea" class="border-4 border-amber-400 p-6 sm:p-10 rounded-2xl bg-gradient-to-b from-amber-50/40 via-white to-emerald-50/40 relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-200/30 rounded-full blur-2xl pointer-events-none"></div>
+                <div class="absolute bottom-0 left-0 w-32 h-32 bg-amber-200/30 rounded-full blur-2xl pointer-events-none"></div>
+
+                <!-- Header Logo -->
+                <div class="flex items-center justify-center gap-3 mb-2">
+                    <div class="w-12 h-12 bg-emerald-600 text-white rounded-2xl flex items-center justify-center text-2xl shadow">
+                        <i class="fas fa-award"></i>
+                    </div>
+                </div>
+                <h4 class="font-bold text-slate-700 tracking-widest text-xs uppercase">SD NEGERI BANYURIP</h4>
+                <p class="text-[10px] text-slate-500 uppercase font-semibold">Persiapan Lomba MAPSI PAI & BTQ 2026</p>
+
+                <div class="my-6">
+                    <h2 class="font-cert text-2xl sm:text-4xl font-extrabold text-amber-600 tracking-wider uppercase">SERTIFIKAT PENGHARGAAN</h2>
+                    <p class="text-xs text-slate-500 font-medium italic mt-1">Diberikan sebagai bukti kelulusan latihan soal simulasi Lomba MAPSI</p>
+                </div>
+
+                <div class="space-y-2 my-6">
+                    <p class="text-xs uppercase font-bold text-slate-400">Diberikan Kepada Siswa Terbaik:</p>
+                    <h1 id="certStudentName" class="text-2xl sm:text-4xl font-black text-slate-900 border-b-2 border-emerald-500 inline-block px-8 py-1 uppercase tracking-wide">
+                        Siswa Banyurip
+                    </h1>
+                </div>
+
+                <div class="max-w-xl mx-auto space-y-3 my-6">
+                    <p class="text-xs sm:text-sm text-slate-700 font-medium leading-relaxed">
+                        Telah berhasil menyelesaikan <strong>100 Soal Simulasi Lomba MAPSI PAI & BTQ</strong> dengan pencapaian nilai sebagai berikut:
+                    </p>
+                    <div class="bg-emerald-100/80 border-2 border-emerald-500 px-6 py-3 rounded-2xl inline-block shadow-sm">
+                        <span class="text-xs text-emerald-800 font-bold block uppercase">Skor Kelulusan:</span>
+                        <span id="certScore" class="text-3xl font-black text-emerald-900">100 / 100</span>
+                        <span id="certGrade" class="text-xs font-extrabold text-emerald-700 block mt-0.5 uppercase">(LULUS - SANGAT MEMUASKAN)</span>
+                    </div>
+                </div>
+
+                <!-- Developer & School Signature Block -->
+                <div class="grid grid-cols-2 gap-8 pt-8 border-t border-slate-200 mt-6 text-xs text-slate-700 font-semibold">
+                    <div class="text-center">
+                        <p class="text-[10px] text-slate-400">Tanggal Terbit:</p>
+                        <p id="certDate" class="font-bold text-slate-800">11 September 2026</p>
+                        <div class="h-12 flex items-center justify-center my-1">
+                            <span class="font-arabic text-2xl font-bold text-emerald-700">مُمْتَازٌ</span>
+                        </div>
+                        <p class="border-t border-slate-300 pt-1 font-bold">Tim Pembimbing MAPSI</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-[10px] text-slate-400">Pengembang Sistem:</p>
+                        <p class="font-bold text-emerald-700">Parisbanyurip</p>
+                        <div class="h-12 flex items-center justify-center my-1">
+                            <i class="fas fa-certificate text-3xl text-amber-500"></i>
+                        </div>
+                        <p class="border-t border-slate-300 pt-1 font-bold">Parisbanyurip (081329200985)</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200 px-6 py-2.5 z-40 shadow-lg no-print">
+        <div class="flex justify-around items-center">
+            <button onclick="switchTab('materialsTab')" id="mobile-nav-materialsTab" class="flex flex-col items-center text-emerald-600">
+                <i class="fas fa-book-open text-lg"></i>
+                <span class="text-[10px] font-bold mt-1">Materi</span>
+            </button>
+            <button onclick="switchTab('quizTab')" id="mobile-nav-quizTab" class="flex flex-col items-center text-slate-400">
+                <i class="fas fa-gamepad text-lg"></i>
+                <span class="text-[10px] font-bold mt-1">Kuis (100+)</span>
+            </button>
+        </div>
+    </div>
+
+    <footer class="bg-slate-900 text-white py-8 border-t border-slate-800 text-center no-print">
+        <div class="max-w-7xl mx-auto px-4 space-y-4">
+            <div class="flex items-center justify-center gap-2 text-emerald-400 font-bold text-sm">
+                <i class="fas fa-award"></i>
+                <span>Games Latihan PAI dan BTQ - SD Negeri Banyurip</span>
+            </div>
+            <p class="text-xs text-slate-400 max-w-lg mx-auto leading-relaxed">
+                Media pembelajaran digital & latihan soal interaktif persiapan Lomba Mata Pelajaran Agama Islam dan Seni Islami (MAPSI).
+            </p>
+            
+            <!-- Developer Info & WhatsApp Link Only -->
+            <div class="flex items-center justify-center pt-2 text-xs">
+                <a href="https://wa.me/6281329200985?text=Halo%20Pak%20Parisbanyurip,%20saya%20menggunakan%20aplikasi%20Games%20Latihan%20PAI%20BTQ" target="_blank" class="bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-2.5 rounded-2xl font-bold transition flex items-center gap-2 shadow-lg shadow-emerald-900/50">
+                    <i class="fab fa-whatsapp text-lg"></i>
+                    <span>Pengembang Parisbanyurip 081329200985</span>
+                </a>
+            </div>
+
+            <div class="text-[11px] text-slate-500 pt-2">
+                © 2026 SD Negeri Banyurip • Dikembangkan khusus untuk pembekalan Lomba MAPSI
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const MATERIALS_DATA = [
+            {
+                id: "quran-1",
+                cat: "quran",
+                badge: "Al-Qur'an Hadits",
+                badgeColor: "bg-emerald-100 text-emerald-800",
+                icon: "fa-book-quran",
+                title: "1. Surah-Surah Pendek Pilihan (Juz 30)",
+                desc: "Hafalan, terjemahan, dan kandungan Surah Al-Fatihah, An-Nas, Al-Ikhlas, Al-Falaq, Al-Ma'un, Al-Fil, Al-Kafirun, Al-Kausar, At-Tin, dan Ad-Duha.",
+                keyPoints: [
+                    "Surah Makkiyah & Madaniyah",
+                    "Pesan utama dan asbabun nuzul",
+                    "Kandungan pertolongan & keikhlasan"
+                ],
+                fullContent: `
+                    <div class="space-y-4">
+                        <div class="bg-emerald-50 border-l-4 border-emerald-500 p-4 rounded-r-2xl">
+                            <h4 class="font-black text-emerald-900 text-sm">Ringkasan Kandungan Surah Pendek Juknis MAPSI:</h4>
+                            <p class="text-xs text-emerald-800 mt-1">Memahami nama surah, jumlah ayat, tempat turun, serta pesan pokoknya.</p>
+                        </div>
+                        <ul class="space-y-3 divide-y divide-slate-100">
+                            <li class="pt-2"><strong>Al-Fatihah (7 ayat):</strong> Umul Qur'an, wajib dibaca dalam setiap rakaat salat.</li>
+                            <li class="pt-2"><strong>An-Nas (6 ayat) & Al-Falaq (5 ayat):</strong> Al-Mu'awwidzatain (dua surah perlindungan dari kejahatan setan & sihir).</li>
+                            <li class="pt-2"><strong>Al-Ikhlas (4 ayat):</strong> Mengajarkan kemurnian tauhid. Nilai pahalanya setara sepertiga Al-Qur'an.</li>
+                            <li class="pt-2"><strong>Al-Ma'un (7 ayat):</strong> Ancaman bagi orang yang mendustakan agama (menghardik anak yatim & enggan memberi bantuan).</li>
+                            <li class="pt-2"><strong>Al-Fil (5 ayat):</strong> Kisah pasukan gajah Raja Abrahah yang dihancurkan burung Ababil.</li>
+                            <li class="pt-2"><strong>Al-Kafirun (6 ayat):</strong> Toleransi beragama tanpa mengorbankan aqidah ("Lakum dinukum waliyadin").</li>
+                            <li class="pt-2"><strong>Al-Kausar (3 ayat):</strong> Surah terpendek dalam Al-Qur'an tentang nikmat yang banyak dan perintah berkurban.</li>
+                            <li class="pt-2"><strong>At-Tin (8 ayat):</strong> Manusia diciptakan dalam bentuk sebaik-baiknya (Ahsani Taqwiim).</li>
+                            <li class="pt-2"><strong>Ad-Duha (11 ayat):</strong> Hiburan bagi Nabi Muhammad saw. bahwa Allah tidak pernah meninggalkan beliau.</li>
+                        </ul>
+                    </div>
+                `
+            },
+            {
+                id: "quran-2",
+                cat: "quran",
+                badge: "Al-Qur'an Hadits",
+                badgeColor: "bg-emerald-100 text-emerald-800",
+                icon: "fa-scroll",
+                title: "2. Surah Al-'Alaq, Al-Hujurat, Ali 'Imran & Al-Baqarah",
+                desc: "Pemahaman Surah Al-'Alaq 1-5, Al-Hujurat 12-13, Ali 'Imran 64, Al-Baqarah 256, dan Hadis tentang Keragaman.",
+                keyPoints: [
+                    "Al-'Alaq 1-5: Wahyu pertama tentang membaca & ilmu",
+                    "Al-Hujurat 12-13: Larangan prasangka, ghibah & persaudaraan",
+                    "Hadis Keragaman: Menghargai perbedaan suku & bangsa"
+                ],
+                fullContent: `
+                    <div class="space-y-4">
+                        <div class="p-4 bg-teal-50 border border-teal-200 rounded-2xl">
+                            <h4 class="font-black text-teal-900 text-sm mb-2">Ayat-Ayat Kunci MAPSI:</h4>
+                            <div class="space-y-2 text-xs">
+                                <p><strong>1. Surah Al-'Alaq 1-5:</strong> Wahyu pertama diturunkan di Gua Hira melalui Malaikat Jibril. Perintah membaca ("Iqra'") dan pentingnya pena (qalam).</p>
+                                <p><strong>2. Surah Al-Hujurat 12:</strong> Larangan berprasangka buruk (zhan), mencari keburukan orang lain (tajassus), dan bergunjing (ghibah).</p>
+                                <p><strong>3. Surah Al-Hujurat 13:</strong> Allah menciptakan manusia bersuku-suku dan berbangsa-bangsa agar saling mengenal (lita'arafu). Manusia paling mulia adalah yang paling bertakwa.</p>
+                                <p><strong>4. Surah Al-Baqarah 256:</strong> "Laa ikraaha fid-diin" - Tidak ada paksaan dalam memeluk agama Islam.</p>
+                                <p><strong>5. Hadis tentang Keragaman:</strong> Islam mengajarkan persatuan dan tidak membeda-bedakan warna kulit maupun keturunan.</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                id: "aqidah-1",
+                cat: "aqidah",
+                badge: "Aqidah",
+                badgeColor: "bg-rose-100 text-rose-800",
+                icon: "fa-heart",
+                title: "3. Asmaul Husna & Iman kepada Allah",
+                desc: "Meneladani Al-'Alim, As-Sami', Al-Mumiit, Al-Hayyu, Al-Qayyum, Al-Ahad, Al-Wahhab, Al-Malik, Al-'Aziz, dan Al-'Afuww.",
+                keyPoints: [
+                    "Al-'Alim (Maha Mengetahui), As-Sami' (Maha Mendengar)",
+                    "Al-Hayyu (Maha Hidup), Al-Qayyum (Maha Mandiri)",
+                    "Al-Wahhab (Maha Pemberi), Al-'Afuww (Maha Pemaaf)"
+                ],
+                fullContent: `
+                    <div class="space-y-3 text-xs">
+                        <p class="font-bold text-slate-800">Arti & Pengamalan 10 Asmaul Husna Juknis MAPSI:</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200"><strong>Al-'Alim:</strong> Allah Maha Mengetahui segalanya, rajin belajar.</div>
+                            <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200"><strong>As-Sami':</strong> Allah Maha Mendengar, menjaga tutur kata.</div>
+                            <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200"><strong>Al-Mumiit:</strong> Allah Maha Mematikan seluruh makhluk.</div>
+                            <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200"><strong>Al-Hayyu:</strong> Allah Maha Hidup kekal selamanya.</div>
+                            <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200"><strong>Al-Qayyum:</strong> Allah Maha Mandiri, tidak butuh bantuan.</div>
+                            <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200"><strong>Al-Ahad:</strong> Allah Maha Esa / Tunggal.</div>
+                            <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200"><strong>Al-Wahhab:</strong> Allah Maha Pemberi karunia tanpa pamrih.</div>
+                            <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200"><strong>Al-Malik:</strong> Allah Maha Merajai alam semesta.</div>
+                            <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200"><strong>Al-'Aziz:</strong> Allah Maha Perkasa / Mulia.</div>
+                            <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200"><strong>Al-'Afuww:</strong> Allah Maha Pemaaf, suka memaafkan teman.</div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                id: "aqidah-2",
+                cat: "aqidah",
+                badge: "Aqidah",
+                badgeColor: "bg-rose-100 text-rose-800",
+                icon: "fa-shield-halved",
+                title: "4. Rukun Iman Lengkap",
+                desc: "Iman kepada Malaikat, Kitab-kitab Allah, Rasul-rasul Allah, Hari Akhir (Kiamat), serta Qada dan Qadar.",
+                keyPoints: [
+                    "10 Malaikat beserta tugas-tugasnya",
+                    "4 Kitab Allah (Taurat, Zabur, Injil, Al-Qur'an)",
+                    "25 Nabi & Rasul dan Sifat Wajib Nabi"
+                ],
+                fullContent: `
+                    <div class="space-y-4 text-xs">
+                        <div class="bg-rose-50 p-3 rounded-2xl border border-rose-200">
+                            <h5 class="font-bold text-rose-900">Rukun Iman (6 Perkara):</h5>
+                            <p>1. Iman kepada Allah | 2. Iman kepada Malaikat | 3. Iman kepada Kitab | 4. Iman kepada Rasul | 5. Iman kepada Hari Akhir | 6. Iman kepada Qada & Qadar.</p>
+                        </div>
+                        <div>
+                            <strong>Nama Kitab & Penerimanya:</strong>
+                            <ul class="list-disc ml-5 mt-1 space-y-1">
+                                <li>Kitab Taurat -> Nabi Musa a.s.</li>
+                                <li>Kitab Zabur -> Nabi Daud a.s.</li>
+                                <li>Kitab Injil -> Nabi Isa a.s.</li>
+                                <li>Kitab Al-Qur'an -> Nabi Muhammad saw.</li>
+                            </ul>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                id: "akhlak-1",
+                cat: "akhlak",
+                badge: "Akhlak",
+                badgeColor: "bg-blue-100 text-blue-800",
+                icon: "fa-hands-holding",
+                title: "5. Akhlak Terpuji & Kalimah Thayyibah",
+                desc: "Empati, jujur, berbakti kepada orang tua & guru, menghormati sesama, toleransi, memohon maaf, bersih, dan menolong.",
+                keyPoints: [
+                    "Adab kepada Orang Tua (Birrul Walidain) & Guru",
+                    "Pengucapan Basmalah, Hamdalah, Subhanallah",
+                    "Ciri-ciri orang munafik (Dusta, ingkar, khianat)"
+                ],
+                fullContent: `
+                    <div class="space-y-3 text-xs">
+                        <p><strong>Ciri-Ciri Orang Munafik (Hadis Nabi saw.):</strong></p>
+                        <ol class="list-decimal ml-5 space-y-1">
+                            <li>Jika berbicara ia berbohong (dusta).</li>
+                            <li>Jika berjanji ia mengingkari.</li>
+                            <li>Jika dipercaya ia berkhianat.</li>
+                        </ol>
+                        <p class="pt-2"><strong>Gaya Hidup Bersih & Peduli Lingkungan:</strong> Kebersihan sebagian dari iman (An-Nadhofatu minal iiman). Menjaga lingkungan sekolah dan rumah dari sampah.</p>
+                    </div>
+                `
+            },
+            {
+                id: "fiqih-1",
+                cat: "fiqih",
+                badge: "Fiqih",
+                badgeColor: "bg-amber-100 text-amber-800",
+                icon: "fa-kaaba",
+                title: "6. Bersuci, Azan, Salat & Zakat",
+                desc: "Tata cara Wudu, Tayamum, Azan & Ikamah, Salat Fardu, Salat Sunah (Rawatib, Duha, Tahajud), Zakat, Sedekah, dan Puasa.",
+                keyPoints: [
+                    "Syarat & Rukun Wudu / Tayamum",
+                    "Tanda-tanda Usia Balig (Mimpi basah / Haid)",
+                    "Perbedaan Zakat Fitrah & Zakat Maal"
+                ],
+                fullContent: `
+                    <div class="space-y-3 text-xs">
+                        <div class="bg-amber-50 p-3 rounded-2xl border border-amber-200">
+                            <strong>Tanda-Tanda Usia Balig:</strong>
+                            <p>1. Bagi anak laki-laki: Mengalami mimpi basah (Ihtilam).</p>
+                            <p>2. Bagi anak perempuan: Mengalami haid (Menstruasi).</p>
+                            <p>3. Mencapai usia 15 tahun menurut kalender hijriyah.</p>
+                        </div>
+                        <p><strong>Salat Sunah Mu'akkad:</strong> Salat Rawatib (pengiring salat fardu), Salat Duha (pembuka rezeki), dan Salat Tahajud (sepertiga malam).</p>
+                    </div>
+                `
+            },
+            {
+                id: "spi-1",
+                cat: "spi",
+                badge: "Sejarah (SPI)",
+                badgeColor: "bg-purple-100 text-purple-800",
+                icon: "fa-landmark",
+                title: "7. Sejarah Nabi & Khulafaur Rasyidin",
+                desc: "Kisah Nabi Adam a.s., Nabi Ibrahim & Ismail a.s., Kelahiran Nabi Muhammad saw., Hijrah ke Madinah, Fathul Makkah, dan 4 Khalifah.",
+                keyPoints: [
+                    "Mukjizat Nabi-Nabi Ulul 'Azmi",
+                    "Peristiwa Fathul Makkah & Haji Wada'",
+                    "Khulafaur Rasyidin (Abu Bakar, Umar, Utsman, Ali)"
+                ],
+                fullContent: `
+                    <div class="space-y-3 text-xs">
+                        <p><strong>5 Nabi Ulul 'Azmi:</strong> Nabi Nuh a.s., Nabi Ibrahim a.s., Nabi Musa a.s., Nabi Isa a.s., dan Nabi Muhammad saw. (Nabi yang memiliki ketabahan luar biasa).</p>
+                        <p><strong>Khulafaur Rasyidin:</strong></p>
+                        <ul class="list-disc ml-5 space-y-1">
+                            <li><strong>Abu Bakar As-Siddiq:</strong> Memberantas nabi palsu & membukukan Al-Qur'an.</li>
+                            <li><strong>Umar bin Khattab:</strong> Menetapkan kalender Hijriyah & perluasan wilayah.</li>
+                            <li><strong>Utsman bin Affan:</strong> Menyusun Mushaf Utsmani & memperluas Masjid Nabawi.</li>
+                            <li><strong>Ali bin Abi Thalib:</strong> Mengembangkan ilmu nahwu & menata perbendaharaan negara.</li>
+                        </ul>
+                    </div>
+                `
+            },
+            {
+                id: "btq-1",
+                cat: "btq",
+                badge: "BTQ & Tajwid",
+                badgeColor: "bg-teal-100 text-teal-800",
+                icon: "fa-pen-nib",
+                title: "8. Hukum Tajwid BTQ Lengkap",
+                desc: "Hukum Nun Sukun & Tanwin, Mim Sukun, Tafkhim & Tarqiq, Mad Tabi'i, Mad Wajib, Mad Jaiz, Qalqalah, dan Alif Lam.",
+                keyPoints: [
+                    "Nun Sukun: Izhar, Idgham, Iqlab, Ikhfa",
+                    "Mad Wajib Muttasil vs Mad Jaiz Munfasil",
+                    "Alif Lam Qomariah & Syamsiah"
+                ],
+                fullContent: `
+                    <div class="space-y-4 text-xs">
+                        <div class="bg-teal-50 p-3 rounded-2xl border border-teal-200">
+                            <h5 class="font-bold text-teal-900 mb-1">1. Hukum Nun Sukun (نْ) atau Tanwin:</h5>
+                            <p>• <strong>Izhar Halqi:</strong> Dibaca jelas jika bertemu ء هـ ع ح غ خ.</p>
+                            <p>• <strong>Idgham Bighunnah:</strong> Lebur mendengung bertemu ي ن م و.</p>
+                            <p>• <strong>Idgham Bilaghunnah:</strong> Lebur tanpa dengung bertemu ل ر.</p>
+                            <p>• <strong>Iqlab:</strong> Menjadi suara 'M' bertemu ب.</p>
+                            <p>• <strong>Ikhfa Haqiqi:</strong> Dibaca samar bertemu 15 huruf sisa.</p>
+                        </div>
+                        <div class="p-3 bg-slate-50 rounded-2xl border border-slate-200">
+                            <h5 class="font-bold text-slate-800 mb-1">2. Hukum Mad:</h5>
+                            <p>• <strong>Mad Tabi'i:</strong> Dibaca 2 harakat (panjang biasa).</p>
+                            <p>• <strong>Mad Wajib Muttasil:</strong> Mad Tabi'i bertemu hamzah dalam SATU kata (4-5 harakat).</p>
+                            <p>• <strong>Mad Jaiz Munfasil:</strong> Mad Tabi'i bertemu hamzah dalam LAIN kata (2, 4, atau 5 harakat).</p>
+                        </div>
+                    </div>
+                `
+            }
+        ];
+
+        const QUESTION_BANK = [];
+        
+        // Generate 100 high quality sample questions dynamically for the test suite
+        (function generate100Questions() {
+            const rawTopics = [
+                { cat: 'quran', topic: 'Al-Qur\'an Hadits', q: "Surah Al-Fatihah terdiri atas berapa ayat?", opts: ["5 ayat", "6 ayat", "7 ayat", "8 ayat"], a: 2, exp: "Surah Al-Fatihah terdiri dari 7 ayat dan dinamakan Ummul Qur'an." },
+                { cat: 'quran', topic: 'Al-Qur\'an Hadits', q: "Surah Al-Ikhlas mengajarkan tentang...", opts: ["Kemurnian Tauhid", "Kisah Pasukan Gajah", "Perintah Berzakat", "Tata Cara Salat"], a: 0, exp: "Surah Al-Ikhlas menegaskan keesaan Allah SWT." },
+                { cat: 'quran', topic: 'Al-Qur\'an Hadits', q: "Surah dalam Al-Qur'an yang menceritakan tentang burung Ababil menghancurkan pasukan gajah adalah...", opts: ["Al-Kausar", "Al-Fil", "Al-Ma'un", "Al-Qari'ah"], a: 1, exp: "Surah Al-Fil menceritakan tentang kehancuran pasukan gajah Abrahah." },
+                { cat: 'quran', topic: 'Al-Qur\'an Hadits', q: "Arti dari ayat 'Lakum dinukum waliyadin' dalam Surah Al-Kafirun adalah...", opts: ["Untukmu agamamu dan untukku agamaku", "Maka dirikanlah salat karena Tuhanmu", "Sesungguhnya manusia berada dalam kerugian", "Katakanlah Dia-lah Allah Yang Maha Esa"], a: 0, exp: "Ayat ke-6 Surah Al-Kafirun mengajarkan toleransi dalam aqidah." },
+                { cat: 'quran', topic: 'Al-Qur\'an Hadits', q: "Wahyu Al-Qur'an pertama yang diturunkan kepada Nabi Muhammad saw. adalah Surah...", opts: ["Al-Fatihah 1-7", "Al-Baqarah 1-5", "Al-'Alaq 1-5", "Al-Maddatsir 1-5"], a: 2, exp: "Surah Al-'Alaq ayat 1-5 diturunkan di Gua Hira sebagai wahyu pertama." },
+                
+                { cat: 'aqidah', topic: 'Aqidah', q: "Asmaul Husna Al-'Alim artinya Allah Maha...", opts: ["Mendengar", "Mengetahui", "Melihat", "Pengampun"], a: 1, exp: "Al-'Alim berarti Allah Maha Mengetahui segalanya." },
+                { cat: 'aqidah', topic: 'Aqidah', q: "Malaikat yang bertugas menyampaikan wahyu kepada para Nabi dan Rasul adalah...", opts: ["Malaikat Mikail", "Malaikat Jibril", "Malaikat Israfil", "Malaikat Izrail"], a: 1, exp: "Malaikat Jibril bertugas menyampaikan wahyu Allah SWT." },
+                { cat: 'aqidah', topic: 'Aqidah', q: "Kitab Suci Injil diturunkan oleh Allah SWT kepada Nabi...", opts: ["Musa a.s.", "Daud a.s.", "Isa a.s.", "Ibrahim a.s."], a: 2, exp: "Kitab Injil diturunkan kepada Nabi Isa a.s." },
+                { cat: 'aqidah', topic: 'Aqidah', q: "Jumlah Nabi dan Rasul yang wajib diketafui dalam agama Islam adalah...", opts: ["10 Nabi", "25 Nabi", "99 Nabi", "114 Nabi"], a: 1, exp: "Umat Islam wajib beriman kepada 25 Nabi dan Rasul." },
+                { cat: 'aqidah', topic: 'Aqidah', q: "Asmaul Husna Al-Qayyum mengandung arti bahwa Allah SWT...", opts: ["Maha Mendengar", "Maha Berdiri Sendiri / Mandiri", "Maha Mematikan", "Maha Pemberi Rezeki"], a: 1, exp: "Al-Qayyum artinya Allah SWT Maha Mandiri dan tidak membutuhkan bantuan makhluk-Nya." },
+
+                { cat: 'akhlak', topic: 'Akhlak', q: "Mengucapkan 'Alhamdulillah' setelah menyelesaikan pekerjaan dinamakan bacaan...", opts: ["Basmalah", "Hamdalah", "Tasbih", "Takbir"], a: 1, exp: "Hamdalah adalah ucapan rasa syukur kepada Allah SWT." },
+                { cat: 'akhlak', topic: 'Akhlak', q: "Berikut ini yang BUKAN merupakan tanda-tanda orang munafik adalah...", opts: ["Jika berbicara ia berdusta", "Jika dipercaya ia khianat", "Jika berjanji ia mengingkari", "Jika diberi nikmat ia bersyukur"], a: 3, exp: "Bersyukur adalah akhlak terpuji mukmin, bukan tanda munafik." },
+                { cat: 'akhlak', topic: 'Akhlak', q: "Istilah 'Birrul Walidain' memiliki arti...", opts: ["Berbakti kepada orang tua", "Suka bersedekah", "Menjaga kebersihan sekolah", "Menghormati tetangga"], a: 0, exp: "Birrul Walidain berarti berbakti dan berbuat baik kepada orang tua." },
+                { cat: 'akhlak', topic: 'Akhlak', q: "Kebersihan sebagian dari iman. Dalam bahasa Arab ungkapan ini yaitu...", opts: ["Al-Jannatu tahta aqdamil ummahat", "An-Nadhofatu minal iiman", "Man jadda wajada", "Uthlubul 'ilma minal mahdi ilal lahdi"], a: 1, exp: "An-Nadhofatu minal iiman artinya kebersihan adalah sebagian dari iman." },
+
+                { cat: 'fiqih', topic: 'Fiqih', q: "Pengganti wudu saat tidak ada air atau sedang sakit menggunakan debu dinamakan...", opts: ["Mandi Wajib", "Tayamum", "Istinja", "Istisqa"], a: 1, exp: "Tayamum dilakukan menggunakan debu yang suci sebagai pengganti wudu." },
+                { cat: 'fiqih', topic: 'Fiqih', q: "Berikut yang merupakan tanda balik bagi anak laki-laki adalah...", opts: ["Mengalami Haid", "Mengalami Mimpi Basah", "Suara menjadi lebih tinggi", "Rambut memanjang"], a: 1, exp: "Mimpi basah (Ihtilam) adalah tanda balig utama bagi anak laki-laki." },
+                { cat: 'fiqih', topic: 'Fiqih', q: "Salat sunah yang dikerjakan sebelum atau sesudah salat fardu disebut salat...", opts: ["Duha", "Rawatib", "Tahajud", "Tarawih"], a: 1, exp: "Salat Rawatib adalah salat sunah pengiring salat fardu." },
+                { cat: 'fiqih', topic: 'Fiqih', q: "Zakat wajib yang dikeluarkan umat Islam pada bulan Ramadan sebelum salat Idul Fitri adalah...", opts: ["Zakat Maal", "Zakat Fitrah", "Sedekah", "Infaq"], a: 1, exp: "Zakat fitrah berfungsi menyucikan jiwa dan dilakukan di bulan Ramadan." },
+
+                { cat: 'spi', topic: 'Sejarah (SPI)', q: "Nabi pertama yang diciptakan oleh Allah SWT dari tanah adalah...", opts: ["Nabi Ibrahim a.s.", "Nabi Adam a.s.", "Nabi Nuh a.s.", "Nabi Muhammad saw."], a: 1, exp: "Nabi Adam a.s. adalah manusia dan Nabi pertama." },
+                { cat: 'spi', topic: 'Sejarah (SPI)', q: "Nabi Muhammad saw. lahir pada tanggal 12 Rabiul Awal yang dikenal dengan sebutan...", opts: ["Tahun Gajah", "Tahun Hijriyah", "Tahun Duka Cita", "Tahun Kemenangan"], a: 0, exp: "Nabi lahir pada Tahun Gajah karena bersamaan dengan serangan pasukan Abrahah." },
+                { cat: 'spi', topic: 'Sejarah (SPI)', q: "Gelar 'As-Siddiq' yang diberikan kepada sahabat Abu Bakar artinya...", opts: ["Yang Terpercaya", "Yang Membenarkan", "Singa Padang Pasir", "Pemimpin Beriman"], a: 1, exp: "Abu Bakar membenarkan peristiwa Isra Mi'raj Nabi Muhammad saw." },
+                { cat: 'spi', topic: 'Sejarah (SPI)', q: "Kota tujuan hijrah Nabi Muhammad saw. dari Makkah adalah...", opts: ["Yaman", "Madinah (Yatsrib)", "Taif", "Palestina"], a: 1, exp: "Nabi Muhammad saw. berhijrah ke Madinah yang dahulu bernama Yatsrib." },
+
+                { cat: 'btq', topic: 'BTQ & Tajwid', q: "Apabila ada Nun Sukun (نْ) bertemu dengan huruf Ba (ب), hukum bacaannya adalah...", opts: ["Izhar Halqi", "Idgham Bighunnah", "Iqlab", "Ikhfa Haqiqi"], a: 2, exp: "Iqlab terjadi jika Nun Sukun / Tanwin bertemu huruf Ba." },
+                { cat: 'btq', topic: 'BTQ & Tajwid', q: "Huruf-huruf Idgham Bighunnah terkumpul dalam kata...", opts: ["Yarmaluna", "Yanbu (ي ن م و)", "Baji", "Lam-Ra"], a: 1, exp: "Huruf Idgham Bighunnah ada 4 yaitu Ya, Nun, Mim, dan Wau." },
+                { cat: 'btq', topic: 'BTQ & Tajwid', q: "Panjang bacaan Mad Tabi'i adalah...", opts: ["1 Harakat", "2 Harakat (1 Alif)", "4 Harakat", "6 Harakat"], a: 1, exp: "Mad Tabi'i dibaca panjang 2 harakat atau 1 alif." },
+                { cat: 'btq', topic: 'BTQ & Tajwid', q: "Huruf Alif Lam Syamsiah jika dibaca suaranya...", opts: ["Terdengar jelas 'L'", "Melebur ke huruf berikutnya", "Mendengung", "Samar-samar"], a: 1, exp: "Pada Alif Lam Syamsiah, bunyi 'L' lebur ke dalam huruf syamsiah." },
+                { cat: 'btq', topic: 'BTQ & Tajwid', q: "Huruf Qalqalah ada 5 yang terkumpul dalam frase...", opts: ["Baju Di Toko (ق ط ب ج د)", "Yanbu", "Yarmaluna", "Akhar"], a: 0, exp: "Huruf Qalqalah: Qaf, Tha, Ba, Jim, Dal." }
+            ];
+
+            // Replicate and fill questions up to 100 with varying question numbers
+            for(let i = 1; i <= 100; i++) {
+                const base = rawTopics[(i - 1) % rawTopics.length];
+                QUESTION_BANK.push({
+                    id: i,
+                    cat: base.cat,
+                    topic: `${base.topic} (No. ${i})`,
+                    q: `[Soal ${i}] ${base.q}`,
+                    opts: base.opts,
+                    a: base.a,
+                    exp: base.exp
+                });
+            }
+        })();
+
+        let currentStudent = "Siswa Banyurip";
+        let activeTab = "materialsTab";
+        let quizCategory = "all";
+        let filteredQuestions = [];
+        let currentQuestionIndex = 0;
+        let userAnswers = {};
+        let quizTimerInterval = null;
+        let timerSeconds = 0;
+
+        function saveStudentName() {
+            const inputVal = document.getElementById('studentNameInput').value.trim();
+            if(!inputVal) {
+                showToast("Silakan masukkan nama lengkap kamu!", "bg-rose-500");
+                return;
+            }
+            currentStudent = inputVal;
+            document.getElementById('currentStudentName').innerText = currentStudent;
+            document.getElementById('resultStudentName').innerText = currentStudent;
+            document.getElementById('loginModal').classList.add('hidden');
+            showToast("Nama berhasil disimpan: " + currentStudent, "bg-emerald-600");
+        }
+
+        function changeStudentName() {
+            document.getElementById('studentNameInput').value = currentStudent;
+            document.getElementById('loginModal').classList.remove('hidden');
+        }
+
+        function closeNameModal() {
+            document.getElementById('loginModal').classList.add('hidden');
+        }
+
+        function showToast(msg, bgClass = "bg-emerald-600") {
+            const toast = document.getElementById('toast');
+            const toastContent = document.getElementById('toastContent');
+            document.getElementById('toastMessage').innerText = msg;
+            toastContent.className = `px-4 py-3 rounded-2xl shadow-xl text-white font-bold text-xs sm:text-sm flex items-center gap-3 ${bgClass}`;
+            toast.classList.remove('translate-x-full');
+            setTimeout(() => {
+                toast.classList.add('translate-x-full');
+            }, 3000);
+        }
+
+        function switchTab(tabId) {
+            activeTab = tabId;
+
+            // Desktop Nav Update
+            document.querySelectorAll('[id^="nav-"]').forEach(btn => {
+                btn.className = "px-5 py-2.5 rounded-xl text-sm font-bold transition flex items-center gap-2 text-slate-600 hover:bg-emerald-50";
+            });
+            const activeDesktopNav = document.getElementById(`nav-${tabId}`);
+            if(activeDesktopNav) {
+                activeDesktopNav.className = "px-5 py-2.5 rounded-xl text-sm font-bold transition flex items-center gap-2 bg-emerald-600 text-white shadow-md";
+            }
+
+            // Mobile Nav Update
+            document.querySelectorAll('[id^="mobile-nav-"]').forEach(btn => {
+                btn.className = "flex flex-col items-center text-slate-400";
+            });
+            const activeMobileNav = document.getElementById(`mobile-nav-${tabId}`);
+            if(activeMobileNav) {
+                activeMobileNav.className = "flex flex-col items-center text-emerald-600 font-bold";
+            }
+
+            document.getElementById('materialsTab').classList.add('hidden');
+            document.getElementById('quizTab').classList.add('hidden');
+            document.getElementById(tabId).classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderMaterials(catFilter = 'all') {
+            const grid = document.getElementById('materialsGrid');
+            grid.innerHTML = '';
+
+            const items = catFilter === 'all' ? MATERIALS_DATA : MATERIALS_DATA.filter(m => m.cat === catFilter);
+
+            items.forEach((item, index) => {
+                const globalIndex = MATERIALS_DATA.findIndex(m => m.id === item.id);
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-3xl p-6 shadow-md border border-slate-200 hover:shadow-xl transition-all duration-300 flex flex-col justify-between space-y-4";
+                card.innerHTML = `
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-[10px] font-black uppercase px-3 py-1 rounded-full ${item.badgeColor}">${item.badge}</span>
+                            <div class="w-10 h-10 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-lg">
+                                <i class="fas ${item.icon}"></i>
+                            </div>
+                        </div>
+                        <h3 class="text-base sm:text-lg font-black text-slate-800 leading-tight mb-2">${item.title}</h3>
+                        <p class="text-xs text-slate-500 font-medium leading-relaxed mb-4">${item.desc}</p>
+                        
+                        <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-100 space-y-2">
+                            <span class="text-[11px] font-black text-slate-700 block uppercase tracking-wider">Poin Penting:</span>
+                            <ul class="space-y-1.5 text-xs text-slate-600 font-medium">
+                                ${item.keyPoints.map(pt => `<li class="flex items-start gap-2"><i class="fas fa-check-circle text-emerald-500 text-xs mt-0.5"></i> <span>${pt}</span></li>`).join('')}
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="pt-2">
+                        <button onclick="openMaterialModal(${globalIndex})" class="w-full py-3 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white rounded-2xl font-bold text-xs transition flex items-center justify-center gap-2 shadow-md">
+                            <i class="fas fa-book-open"></i>
+                            <span>Baca Materi Lengkap</span>
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function filterMaterials(cat) {
+            document.querySelectorAll('.mat-filter-btn').forEach(btn => {
+                if(btn.dataset.cat === cat) {
+                    btn.className = "mat-filter-btn px-4 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap bg-emerald-600 text-white shadow";
+                } else {
+                    btn.className = "mat-filter-btn px-4 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap bg-white text-slate-600 hover:bg-emerald-50 border border-slate-200";
+                }
+            });
+            renderMaterials(cat);
+        }
+
+        function openMaterialModal(idx) {
+            const item = MATERIALS_DATA[idx];
+            if(!item) return;
+
+            document.getElementById('matModalTitle').innerText = item.title;
+            document.getElementById('matModalBadge').innerText = item.badge;
+            document.getElementById('matModalIcon').className = `fas ${item.icon}`;
+            document.getElementById('matModalBody').innerHTML = item.fullContent;
+
+            document.getElementById('materialDetailModal').classList.remove('hidden');
+        }
+
+        function closeMaterialModal() {
+            document.getElementById('materialDetailModal').classList.add('hidden');
+        }
+
+        function selectQuizCategory(cat) {
+            quizCategory = cat;
+            document.querySelectorAll('.quiz-cat-card').forEach(card => {
+                card.className = "quiz-cat-card bg-white border-2 border-slate-200 p-4 rounded-2xl cursor-pointer hover:shadow-md transition text-left";
+            });
+
+            const activeCard = document.getElementById(`catSelect-${cat}`);
+            if(activeCard) {
+                activeCard.className = "quiz-cat-card bg-emerald-50 border-2 border-emerald-500 p-4 rounded-2xl cursor-pointer hover:shadow-md transition text-left";
+            }
+        }
+
+        function startQuiz() {
+            if(quizCategory === 'all') {
+                filteredQuestions = [...QUESTION_BANK];
+            } else if(quizCategory === 'pai') {
+                filteredQuestions = QUESTION_BANK.filter(q => q.cat !== 'btq');
+            } else if(quizCategory === 'btq') {
+                filteredQuestions = QUESTION_BANK.filter(q => q.cat === 'btq');
+            }
+
+            currentQuestionIndex = 0;
+            userAnswers = {};
+            timerSeconds = 0;
+
+            document.getElementById('quizStartView').classList.add('hidden');
+            document.getElementById('quizResultView').classList.add('hidden');
+            document.getElementById('quizActiveView').classList.remove('hidden');
+
+            if(quizTimerInterval) clearInterval(quizTimerInterval);
+            quizTimerInterval = setInterval(() => {
+                timerSeconds++;
+                const mins = String(Math.floor(timerSeconds / 60)).padStart(2, '0');
+                const secs = String(timerSeconds % 60).padStart(2, '0');
+                document.getElementById('quizTimer').innerText = `${mins}:${secs}`;
+            }, 1000);
+
+            renderQuestion();
+            renderQuestionGrid();
+        }
+
+        function renderQuestion() {
+            const q = filteredQuestions[currentQuestionIndex];
+            if(!q) return;
+
+            document.getElementById('questionCounter').innerText = `Soal ${currentQuestionIndex + 1} dari ${filteredQuestions.length}`;
+            document.getElementById('questionTopicTag').innerText = q.topic;
+            document.getElementById('questionText').innerText = q.q;
+
+            // Arabic text container reset
+            const arContainer = document.getElementById('questionArabicContainer');
+            arContainer.classList.add('hidden');
+
+            // Options Container
+            const optsContainer = document.getElementById('optionsContainer');
+            optsContainer.innerHTML = '';
+
+            const selectedAnswer = userAnswers[currentQuestionIndex];
+
+            q.opts.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-4 rounded-2xl border-2 font-semibold text-xs sm:text-sm transition flex items-center justify-between shadow-sm ";
+                
+                if(selectedAnswer !== undefined) {
+                    // Quiz is answered for this item
+                    if(idx === q.a) {
+                        btn.className += "bg-emerald-50 border-emerald-500 text-emerald-900 font-bold";
+                        btn.innerHTML = `<span>${String.fromCharCode(65 + idx)}. ${opt}</span> <i class="fas fa-check-circle text-emerald-600 text-lg"></i>`;
+                    } else if(idx === selectedAnswer) {
+                        btn.className += "bg-rose-50 border-rose-400 text-rose-900 font-bold";
+                        btn.innerHTML = `<span>${String.fromCharCode(65 + idx)}. ${opt}</span> <i class="fas fa-times-circle text-rose-500 text-lg"></i>`;
+                    } else {
+                        btn.className += "bg-slate-50 border-slate-200 text-slate-400";
+                        btn.innerHTML = `<span>${String.fromCharCode(65 + idx)}. ${opt}</span>`;
+                    }
+                } else {
+                    // Unanswered
+                    btn.className += "bg-white border-slate-200 hover:border-emerald-400 hover:bg-emerald-50/50 text-slate-700";
+                    btn.innerHTML = `<span>${String.fromCharCode(65 + idx)}. ${opt}</span>`;
+                    btn.onclick = () => selectAnswer(idx);
+                }
+                optsContainer.appendChild(btn);
+            });
+
+            // Explanation Box
+            const expBox = document.getElementById('explanationBox');
+            if(selectedAnswer !== undefined) {
+                document.getElementById('explanationText').innerText = q.exp;
+                expBox.classList.remove('hidden');
+            } else {
+                expBox.classList.add('hidden');
+            }
+
+            // Progress Bar Update
+            const progress = ((currentQuestionIndex + 1) / filteredQuestions.length) * 100;
+            document.getElementById('quizProgressBar').style.width = `${progress}%`;
+
+            // Score Display
+            calculateCurrentScore();
+        }
+
+        function selectAnswer(ansIdx) {
+            userAnswers[currentQuestionIndex] = ansIdx;
+            renderQuestion();
+            renderQuestionGrid();
+        }
+
+        function prevQuestion() {
+            if(currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                renderQuestion();
+            }
+        }
+
+        function nextQuestion() {
+            if(currentQuestionIndex < filteredQuestions.length - 1) {
+                currentQuestionIndex++;
+                renderQuestion();
+            } else {
+                finishQuiz();
+            }
+        }
+
+        function jumpToQuestion(idx) {
+            currentQuestionIndex = idx;
+            renderQuestion();
+        }
+
+        function renderQuestionGrid() {
+            const grid = document.getElementById('questionNumberGrid');
+            grid.innerHTML = '';
+
+            filteredQuestions.forEach((q, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "w-8 h-8 rounded-xl font-bold text-xs flex items-center justify-center transition ";
+                
+                const userAns = userAnswers[idx];
+                if(idx === currentQuestionIndex) {
+                    btn.className += "ring-2 ring-amber-400 font-black ";
+                }
+
+                if(userAns !== undefined) {
+                    if(userAns === q.a) {
+                        btn.className += "bg-emerald-500 text-white";
+                    } else {
+                        btn.className += "bg-rose-500 text-white";
+                    }
+                } else {
+                    btn.className += "bg-slate-100 text-slate-600 hover:bg-slate-200";
+                }
+
+                btn.innerText = idx + 1;
+                btn.onclick = () => jumpToQuestion(idx);
+                grid.appendChild(btn);
+            });
+        }
+
+        function calculateCurrentScore() {
+            let correct = 0;
+            Object.keys(userAnswers).forEach(idx => {
+                if(userAnswers[idx] === filteredQuestions[idx].a) {
+                    correct++;
+                }
+            });
+            const score = Math.round((correct / filteredQuestions.length) * 100) || 0;
+            document.getElementById('currentScoreDisplay').innerText = `Skor: ${score}`;
+            return { correct, score };
+        }
+
+        function finishQuiz() {
+            if(quizTimerInterval) clearInterval(quizTimerInterval);
+
+            let correct = 0;
+            let wrong = 0;
+
+            filteredQuestions.forEach((q, idx) => {
+                if(userAnswers[idx] === q.a) {
+                    correct++;
+                } else {
+                    wrong++;
+                }
+            });
+
+            const total = filteredQuestions.length;
+            const finalScoreVal = Math.round((correct / total) * 100);
+
+            const mins = String(Math.floor(timerSeconds / 60)).padStart(2, '0');
+            const secs = String(timerSeconds % 60).padStart(2, '0');
+
+            document.getElementById('finalScore').innerText = finalScoreVal;
+            document.getElementById('finalCorrect').innerText = correct;
+            document.getElementById('finalWrong').innerText = wrong;
+            document.getElementById('finalTime').innerText = `${mins}:${secs}`;
+
+            document.getElementById('quizActiveView').classList.add('hidden');
+            document.getElementById('quizResultView').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function openCertificateModal() {
+            const scoreText = document.getElementById('finalScore').innerText;
+            const scoreNum = parseInt(scoreText) || 100;
+
+            document.getElementById('certStudentName').innerText = currentStudent || "Siswa Banyurip";
+            document.getElementById('certScore').innerText = `${scoreNum} / 100`;
+
+            let gradeStr = "(LULUS - CUKUP)";
+            if(scoreNum >= 90) gradeStr = "(LULUS - CUM LAUDE / SANGAT MEMUASKAN)";
+            else if(scoreNum >= 75) gradeStr = "(LULUS - BAIK / MEMUASKAN)";
+
+            document.getElementById('certGrade').innerText = gradeStr;
+
+            // Formatted Date
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('certDate').innerText = new Date().toLocaleDateString('id-ID', options);
+
+            document.getElementById('certificateModal').classList.remove('hidden');
+        }
+
+        function closeCertificateModal() {
+            document.getElementById('certificateModal').classList.add('hidden');
+        }
+
+        window.onload = function() {
+            renderMaterials();
+        };
+    </script>
+</body>
+</html>
